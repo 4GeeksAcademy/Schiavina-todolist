@@ -20,8 +20,8 @@ function handleSubmit(event){
 	setDato("");
 }
 
-function borrarDato(event){
-const nuevaLista = listaDatos.filter((item)=> item.id !== id);
+function borrarDato(nombre){
+const nuevaLista = listaDatos.filter((item)=> item !== nombre);
 setListaDatos(nuevaLista);
 }
 	return (
@@ -35,7 +35,7 @@ setListaDatos(nuevaLista);
     <label htmlFor="datos" className="form-label"></label>
     <input type="text" className="form-control p-0 m-0" id="datos" aria-describedby="emailHelp" onChange={handleChange} value={dato} required />
   </div>
-  <ul className="p-0" style={{ listStyle: "none" }}>{listaDatos.map((item, index)=> (<li className="border-top border-bottom m-0 p-0" key={item.id}>{item} <button className="border-0 bg-white" type="button" onClick={()=> borrarDato(item.id)}>X</button></li>))}</ul>
+  <ul className="p-0" style={{ listStyle: "none" }}>{listaDatos.map((item, index)=> (<li className="border-top border-bottom m-0 p-0 d-flex" key={item.id}>{item} <span className="border-0 bg-white justify-content-end" type="button" onClick={()=> borrarDato(item)}>X</span></li>))}</ul>
   <p className="p-0 m-0 border">{pendiente} Items Left</p>
   <button type="submit" className="btn btn-primary">Submit</button>
 </form>
