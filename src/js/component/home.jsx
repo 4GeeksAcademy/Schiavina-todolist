@@ -12,28 +12,41 @@ const Home = () => {
 		obtenerTareas();
 		
 	}, []);
-	console.log(listaDatos);
 	
 	//FUNCION PARA TRAER LAS TAREAS DE LA BBDD
 
 	function obtenerTareas() {
-		fetch("https://assets.breatheco.de/apis/fake/todos/user/maxischiavina")
+		fetch("https://playground.4geeks.com/apis/fake/todos/user/maxischiavina")
 			.then(response => response.json())
 			.then(data => setListaDatos([...data]))
 			.catch(err => console.log(err));
 	}
 		// FUNCION PARA SUMAR LA TAREA A LA BASE DE DATOS
+
+
+		
 		function agregarTarea() {
-			fetch("https://assets.breatheco.de/apis/fake/todos/user/maxischiavina", {
+			fetch('https://playground.4geeks.com/apis/fake/todos/user/maxischiavina', {
 				method: "PUT",
-				body: JSON.stringify(
-					listaDatos
-				),
-				headers: { "Content-type": "application/json" }
-			})
-				.then(response => response.json())
-				.then(json => console.log(json))
-				.catch(err => console.log(err));
+				body: JSON.stringify(listaDatos),
+				headers: {
+				  "Content-Type": "application/json"
+				}
+			  })
+			  .then(resp => {
+				  console.log(resp.ok); // will be true if the response is successfull
+				  console.log(resp.status); // the status code = 200 or code = 400 etc.
+				  console.log(resp.text()); // will try return the exact result as string
+				  return resp.json(); // (returns promise) will try to parse the result as json as return a promise that you can .then for results
+			  })
+			  .then(data => {
+				  //here is where your code should start after the fetch finishes
+				  console.log(data); //this will print on the console the exact object received from the server
+			  })
+			  .catch(error => {
+				  //error handling
+				  console.log(error);
+			  });
 		}
 
 
@@ -52,12 +65,14 @@ const Home = () => {
 		event.preventDefault();
 		setListaDatos([...listaDatos, {label: todo, done: false}]);
 		setTodo("");
-		// agregarTarea();
+		console.log(listaDatos);
+		agregarTarea();
 	}
 	
 	function borrarDato(nombre){
 	const nuevaLista = listaDatos.filter((item)=> item !== nombre);
 	setListaDatos(nuevaLista);
+	agregarTarea();
 	}
 
 	function handleClick() {
@@ -96,15 +111,6 @@ const Home = () => {
 </ul>
   <p className="p-0 m-0 border">{pendiente()}</p>
   </div>
-
-  <div className="text center d-flex justify-content-between">
-	<div>
-	<button className="btn btn-sm btn-success ms-5" onClick={handleClick}>Actualizar tareas</button>
-	</div>
-  <div className="text center d-flex justify-content-center">
-	<button className="btn btn-sm btn-danger me-5" onClick={handleEliminar}>Eliminar tareas</button>
-	</div>
-	</div>
 </form>
 </div>
 		</div>
