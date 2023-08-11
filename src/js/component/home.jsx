@@ -5,114 +5,90 @@ import rigoImage from "../../img/rigo-baby.jpg";
 
 //create your first component
 const Home = () => {
-	const [todo, setTodo] = useState("");
-	const [listaDatos, setListaDatos] = useState([]);
+	const [tarea, setTarea] = useState("");
+	const [listaTareas, setListaTareas] = useState([]);
 
 	useEffect(() => {
 		obtenerTareas();
-		
-	}, []);
+		console.log("Valor actualizado de tarea:", tarea);
+	  }, [tarea]);
 	
-	//FUNCION PARA TRAER LAS TAREAS DE LA BBDD
-
-	function obtenerTareas() {
-		fetch("https://playground.4geeks.com/apis/fake/todos/user/maxischiavina")
-			.then(response => response.json())
-			.then(data => setListaDatos([...data]))
-			.catch(err => console.log(err));
-	}
-		// FUNCION PARA SUMAR LA TAREA A LA BASE DE DATOS
-
-
-		
-		function agregarTarea() {
-			fetch('https://playground.4geeks.com/apis/fake/todos/user/maxischiavina', {
-				method: "PUT",
-				body: JSON.stringify(listaDatos),
-				headers: {
-				  "Content-Type": "application/json"
-				}
-			  })
-			  .then(resp => {
-				  console.log(resp.ok); // will be true if the response is successfull
-				  console.log(resp.status); // the status code = 200 or code = 400 etc.
-				  console.log(resp.text()); // will try return the exact result as string
-				  return resp.json(); // (returns promise) will try to parse the result as json as return a promise that you can .then for results
-			  })
-			  .then(data => {
-				  //here is where your code should start after the fetch finishes
-				  console.log(data); //this will print on the console the exact object received from the server
-			  })
-			  .catch(error => {
-				  //error handling
-				  console.log(error);
-			  });
-		}
-
-
-	//FUNCION PARA GENERAR EL NRO DE TAREAS PENDIENTES
-	function pendiente(){
-		if (listaDatos.length >= 1) return (listaDatos.length + " Tareas pendientes")
+	function pendiente() {
+		if (listaTareas.length >= 1) return (listaTareas.length + " Tareas pendientes")
 		else return ("No hay tareas pendientes, agregar tarea")
-	}
-	
-
+	} 
+	  
 	function handleChange(event){
-	setTodo(event.target.value)
-	};
-	
-	function handleSubmit(event){
+		setTarea(event.target.value)	
+	}
+
+	function handleSubmit(event) {
 		event.preventDefault();
-		setListaDatos([...listaDatos, {label: todo, done: false}]);
-		setTodo("");
-		console.log(listaDatos);
-		agregarTarea();
+		if (tarea.trim() !== "") { 
+		  setListaTareas([...listaTareas, tarea]);
+		  setTarea(""); 
+		  agregarTarea();
+		}
+	}
+	function borrarDato(nombre) {
+		const nuevaLista = listaTareas.filter((item)=> item !== nombre);
+	setListaTareas(nuevaLista);	
 	}
 	
-	function borrarDato(nombre){
-	const nuevaLista = listaDatos.filter((item)=> item !== nombre);
-	setListaDatos(nuevaLista);
-	agregarTarea();
-	}
-
-	function handleClick() {
-		agregarTarea();
-	}
-
-	function handleEliminar() {
-		setListaDatos([]);
-		agregarTarea();
-	}
-
-
-
-
+	// ##################FETCH PARA AGREGAR UNA TAREA###########################
+	function agregarTarea(){
+	fetch("https://playground.4geeks.com/apis/fake/todos/user/maxischiavina", {
+					method: 'PUT',
+					body: JSON.stringify(listaTareas),
+					headers:{ 'Content-Type':'application/json'
+				}
+				})
+				  .then(response => response.json())
+				  .then(data => console.log(data))
+				  .catch((error) => console.log(error));
+			}
+				// ##################FETCH PARA TRAER TODAS LAS TAREAS###########################
+				function obtenerTareas() {
+					fetch("https://playground.4geeks.com/apis/fake/todos/user/maxischiavina")
+						.then(response => response.json())
+						.then(data => setListaTareas([...data]))
+						.catch(err => console.log(err));
+				}
+				
 
 	return (
-		<div className="bg-dark d-flex align-items center justify-content-center " style={{ height: 500 }}>
-		<div className="bg-white w-50 align-items center m-2" style={{ height: 450 }}>
-			<h1 className="text-center justify-content-center fs-1">Todos</h1>
-
-
+		<div className="container p-0">
+			<div className="bg-dark w-100 p-0 d-flex justify-content-center" style={{ minHeight: "600px", overflowY: "auto" }}>
 			<form onSubmit={handleSubmit}>
-  <div className="m-0"  style={{ height: 250 }}>
-    
-    <input type="text" className="form-control p-0 m-0" id="datos" aria-describedby="emailHelp" onChange={handleChange} value={todo} />
-  
+  <div className="mb-3 bg-white mt-5">
+    <label htmlFor="tareapendiente" style={{ minWidth: "700px", overflowY: "auto" }} className="form-label text-dark text-center"><h1>Tareas pendientes de hacer:</h1></label>
+    <input type="text" className="form-control" onChange={handleChange} value={tarea} id="tareapendiente" aria-describedby="emailHelp" />
 	<ul className="p-0 m-0" style={{ listStyle: "none" }}>
-  {listaDatos.map((item, index)=> (
+  {listaTareas.map((item, index)=> (
     <li className="border-top border-bottom m-0 p-0" key={index}>
       <div className="d-flex justify-content-between align-items-center">
-        <span>{item.label}</span>
+        <span>{item}</span>
         <button type="button" className="btn " onClick={() => borrarDato(item)}>x</button>
       </div>
     </li>
   ))}
 </ul>
-  <p className="p-0 m-0 border">{pendiente()}</p>
+    <div id="emailHelp" className="form-text text-dark mt-5">{pendiente()}</div>
   </div>
+
+	<div className="text-center">
+	<button type="submit" className="btn btn-primary" onClick={()=> console.log(listaTareas)}>Actualizar</button>
+	</div>
+  
 </form>
-</div>
+
+			</div>
+
+
+
+
+
+
 		</div>
 	);
 };
