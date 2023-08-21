@@ -11,7 +11,7 @@ const Home = () => {
 	useEffect(() => {
 		obtenerTareas();
 		console.log("Valor actualizado de tarea:", tarea);
-	  }, [tarea]);
+	  }, []);
 	
 	function pendiente() {
 		if (listaTareas.length >= 1) return (listaTareas.length + " Tareas pendientes")
@@ -27,12 +27,11 @@ const Home = () => {
 		if (tarea.trim() !== "") { 
 		  setListaTareas([...listaTareas, tarea]);
 		  setTarea(""); 
-		  agregarTarea();
 		}
 	}
 	function borrarDato(nombre) {
 		const nuevaLista = listaTareas.filter((item)=> item !== nombre);
-	setListaTareas(nuevaLista);	
+		setListaTareas(nuevaLista);	
 	}
 	
 	// ##################FETCH PARA AGREGAR UNA TAREA###########################
@@ -47,6 +46,7 @@ const Home = () => {
 				  .then(data => console.log(data))
 				  .catch((error) => console.log(error));
 			}
+			
 				// ##################FETCH PARA TRAER TODAS LAS TAREAS###########################
 				function obtenerTareas() {
 					fetch("https://playground.4geeks.com/apis/fake/todos/user/maxischiavina")
@@ -77,7 +77,7 @@ const Home = () => {
   </div>
 
 	<div className="text-center">
-	<button type="submit" className="btn btn-primary" onClick={()=> console.log(listaTareas)}>Actualizar</button>
+	<button type="submit" className="btn btn-primary" onClick={()=> agregarTarea()}>Confirmar cambios</button>
 	</div>
   
 </form>
